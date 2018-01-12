@@ -1,0 +1,73 @@
+sitemap main label="Home"
+{
+	Frame label="Outside" {
+		Text item=Outside_Temp valuecolor=[Outside_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Outside_Temp_LastUpdate>90="#D3D3D3",>25="#FFA500",>15="#006400",>5="#0000A0",<=5="#0000FF"] {
+			Frame {
+				Text item=Outside_Temp valuecolor=[Outside_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Outside_Temp_LastUpdate>90="#D3D3D3",>25="#FFA500",>15="#006400",>5="#0000A0",<=5="#0000FF"]
+				Switch item=Outside_Temp_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=OutsideTemp_Chart period=h refresh=6000 visibility=[Outside_Temp_Chart_Period==0, Outside_Temp_Chart_Period=="Uninitialized"]
+				Chart item=OutsideTemp_Chart period=D refresh=30000 visibility=[Outside_Temp_Chart_Period==1]
+				Chart item=OutsideTemp_Chart period=W refresh=30000 visibility=[Outside_Temp_Chart_Period==2]
+			}
+		}
+	}
+	
+	Frame label="Living Room" {
+		Text item=Liv_Temperature valuecolor=[Liv_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Liv_Temp_LastUpdate>90="#D3D3D3",>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"] {
+			Frame {
+				Text item=Liv_Temp_Max valuecolor=[>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"]
+				Text item=Liv_Temp_Min valuecolor=[>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"]
+				Text item=Liv_Humidity
+				Text item=Liv_Humidex
+				Text item=Liv_Temp_LastUpdate valuecolor=[Liv_Temp_LastUpdate>120="#FFA500", Liv_Temp_LastUpdate>300="#FF0000"]
+		Text item=Liv_Temp_DelayedCaption {
+			Setpoint item=Liv_Temp_DelayedTemp minValue=5 maxValue=30 step=0.5
+			Setpoint item=Liv_Temp_DelayedInterval minValue=0.5 maxValue=8 step=0.5
+			Switch item=Liv_Temp_DelayedOnOff	mappings=[0 = "Cancel",1 = "Set"]
+		}
+			}			
+			Frame {
+				Switch item=Liv_Temp_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=LivTemp_Chart period=h refresh=6000 visibility=[Liv_Temp_Chart_Period==0, Liv_Temp_Chart_Period=="Uninitialized"]
+				Chart item=LivTemp_Chart period=D refresh=30000 visibility=[Liv_Temp_Chart_Period==1]
+				Chart item=LivTemp_Chart period=W refresh=30000 visibility=[Liv_Temp_Chart_Period==2]
+			}
+		}
+		Setpoint item=Liv_Temp_Setpoint minValue=5 maxValue=30 step=0.5
+		Switch item=Liv_Temp_Predefined label="Set Temp" mappings=[0="Cold", 1="Normal", 2="Warm"]
+		Switch item=LivLight_Lamp
+		Switch item=RF433_Socket2 label="Humidifier"
+
+	}
+	
+
+	Frame label="BedRoom" {
+		Text item=Bed_Temperature valuecolor=[Bed_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Bed_Temp_LastUpdate>90="#D3D3D3",>25="#FFA500",>18="#006400",>5="#0000A0",<=5="#0000FF"] {
+			Frame {
+				Text item=Bed_Temp_Max valuecolor=[>25="#FFA500",>18="#006400",>5="#0000A0",<=5="#0000FF"]
+				Text item=Bed_Temp_Min valuecolor=[>25="#FFA500",>18="#006400",>5="#0000A0",<=5="#0000FF"]
+				Text item=Bed_Humidity
+				Text item=Bed_Temp_LastUpdate valuecolor=[Bed_Temp_LastUpdate>120="#FFA500", Bed_Temp_LastUpdate>300="#FF0000"]
+			}			
+			Frame {
+				Switch item=Bed_Temp_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=BedTemp_Chart period=h refresh=6000 visibility=[Bed_Temp_Chart_Period==0, Bed_Temp_Chart_Period=="Uninitialized"]
+				Chart item=BedTemp_Chart period=D refresh=30000 visibility=[Bed_Temp_Chart_Period==1]
+				Chart item=BedTemp_Chart period=W refresh=30000 visibility=[Bed_Temp_Chart_Period==2]
+			}
+		}
+		Setpoint item=BedTemp_Setpoint label="Set Temp" minValue=5 maxValue=27 step=0.5
+		Switch item=Bed_Temp_Predefined label="Set Temp" mappings=[0="Cold", 1="Normal", 2="Warm"]
+		Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 2="Lower", 6="Low", 100="Max"] 
+		Text label="Lights" {
+			Frame label="Bedroom Lights" {
+				Slider item=Bedroom_Dimmer label="Dimmer"
+				Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 2="Lower", 6="Low", 100="Max"] 
+				Slider item=Bedroom_Lamp label="Lamp"
+				Slider item=Bedroom_Lamp_Color label="Lamp color"
+			}
+		}
+		Switch item=BedLight_Lamp
+	}
+	
+}

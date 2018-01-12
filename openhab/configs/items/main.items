@@ -1,0 +1,51 @@
+
+Group Temperatures
+Group Lights
+
+Group OutsideTemp_Chart	
+Number Outside_Temp 		        "Outside Temp [%.1f °C]"		<temperature> 	(Outside, Temperatures, OutsideTemp_Chart) {pilight="local#outside_temp,property=temperature"}
+Number Outside_Temp_Chart_Period    "Chart Period"
+DateTime Outside_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
+
+Group LivRoom
+Group LivTemp_Chart													
+Group GF_Living_TH "Living Room Thermostat" [ "Thermostat" ]
+Number Liv_Temperature 		"Living Temp [%.1f °C]"		<temperature> 	(LivRoom, Temperatures, LivTemp_Chart, GF_Living_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/livroom/temp:state:default]"}
+Number Liv_Humidity 		"Humidity [%.1f %%]"		<water> 		(LivRoom) {mqtt="<[broker:/ha/livroom/hum:state:default]"}
+Number Liv_Humidex		    "Humidex [SCALE(humidex.scale):%s]" 			(LivRoom)
+Number Liv_Temp_Max 		"Todays Maximum [%.1f °C]"			<temperature> (LivRoom)
+Number Liv_Temp_Min 		"Todays Minimum [%.1f °C]"			<temperature> (LivRoom)
+Number Liv_Temp_Chart_Period		"Chart Period"
+Number Liv_Temp_Predefined							<temperature_cold>
+DateTime Liv_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
+
+String Liv_Temp_DelayedCaption	"Delayed Temp [%s]"				<clock-on>
+Number Liv_Temp_DelayedTemp		"Delayed Temp [%.1f °C]"		<temperature_cold>
+Number Liv_Temp_DelayedInterval	"Delay By [%.1f hours]"				<clock>
+Number Liv_Temp_DelayedOnOff	"Timer"						<clock-on>
+
+Switch LivLight_Lamp 	"Living room Lamp" 		(LivRoom, Lights)	["Switchable"]	{pilight="local#livRoom_light"}
+Number Liv_Temp_Setpoint		"Set Temp [%.1f °C]" <temperature_cold> (LivRoom, LivTemp_Chart, GF_Living_TH)  [ "TargetTemperature" ] {mqtt=">[broker:/ha/livroom/targetTemp:command:*:default], <[broker:/ha/livroom/targetTempIn:state:default]"}
+String TH_GF_HCLivMode "Living Room Heating/Cooling Mode" (GF_Living_TH) [ "homekit:HeatingCoolingMode" ]
+Switch RF433_Socket2 	"Socket2" 		(BedRoom)	["Switchable"] {pilight="local#remote_button_2"}
+
+
+Group BedRoom
+Group BedTemp_Chart
+Group GF_Bedroom_TH "BedRoom Thermostat" [ "Thermostat" ]													
+Number Bed_Temperature 		"Bedroom Temp [%.1f °C]"		<temperature> 	(BedRoom, Temperatures, BedTemp_Chart, GF_Bedroom_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/bedroom/temp:state:default]"}
+Number Bed_Humidity 		"Humidity [%.1f %%]"		<water> 		(BedRoom) {mqtt="<[broker:/ha/bedroom/hum:state:default]"}
+Number Bed_Temp_Max 		"Todays Maximum [%.1f °C]"			<temperature> (BedRoom)
+Number Bed_Temp_Min 		"Todays Minimum [%.1f °C]"			<temperature> (BedRoom)
+Number Bed_Temp_Chart_Period		"Chart Period"
+Number Bed_Temp_Predefined										<temperature_cold>
+DateTime Bed_Temp_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
+
+Switch BedLight_Lamp 	"Humidifier" 		(BedRoom)	["Switchable"] {pilight="local#remote_button_4"}
+Number BedTemp_Setpoint		"Set BTemp [%.1f °C]" <temperature_cold> (BedRoom, BedTemp_Chart, GF_Bedroom_TH) [ "TargetTemperature" ] {mqtt=">[broker:/ha/bedroom/targetTemp:command:*:default], <[broker:/ha/bedroom/targetTempIn:state:default]"}
+String TH_GF_HCBedMode "BedRoom Heating/Cooling Mode" (GF_Bedroom_TH) [ "homekit:HeatingCoolingMode" ]
+Dimmer Bedroom_Dimmer   "Bedroom Dimmer [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb100:bedroom:brightness" }
+Dimmer Bedroom_Lamp   "Bedroom Lamp [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb120:bedroom:brightness" }
+Dimmer Bedroom_Lamp_Color   "Bedroom Lamp Color [%d %%]"           <slider>  { channel="tplinksmarthome:lb120:bedroom:colorTemperature" }
+
+

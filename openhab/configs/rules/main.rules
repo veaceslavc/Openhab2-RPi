@@ -1,0 +1,177 @@
+
+// Generic
+
+var Timer Liv_Temp_DelayedTimer
+var DecimalType liv_delayedTemp
+
+rule "Initialize items"
+when
+    System started
+then
+    logInfo("Initializer", "Started Timer ...")
+
+	Liv_Temp_DelayedCaption.postUpdate("Not Set")
+
+    createTimer(now.plusSeconds(30)) [|
+
+        logInfo("Initializer", "Initializing default values")
+        //Wait for 30 seconds and initialize items 
+        if (Liv_Temp_DelayedTemp.state == NULL) Liv_Temp_DelayedTemp.postUpdate(20)
+        if (Liv_Temp_DelayedInterval.state == NULL) Liv_Temp_DelayedInterval.postUpdate(4)
+        
+    ]
+end
+
+// Outside 
+
+rule "Records last Outside Temp update time"
+when
+  Item Outside_Temp received update
+then
+  postUpdate(Outside_Temp_LastUpdate, new DateTimeType())
+end
+
+
+//  Living Room 
+
+rule "Set Predefined Temp in Living room"
+when
+	Item Liv_Temp_Predefined received command
+then
+	logDebug("TempLogger", "Liv_Temp_Predefined changed. Liv_Temp_Predefined.state: [{}]", Liv_Temp_Predefined.state) 
+	sendCommand(Liv_Temp_Setpoint, transform("MAP", "predefined_temp.map", Liv_Temp_Predefined.state.toString))
+end
+
+rule "UnSet Predefined Temp in Living room"
+when
+	Item Liv_Temp_Setpoint changed
+then
+	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", Liv_Temp_Setpoint.state.toString) 
+	if (setpointToPredefined != null && setpointToPredefined.length > 0) {
+		postUpdate(Liv_Temp_Predefined, setpointToPredefined)
+	} else {
+		postUpdate(Liv_Temp_Predefined, NULL)
+	}
+		
+end
+
+rule "Update max and min temperatures in Liv Room"
+when
+	Item Liv_Temperature changed or
+	Time cron "0 0 0 * * ?" or
+	System started
+then	
+	postUpdate(Liv_Temp_Max, Liv_Temperature.maximumSince(now.toDateTimeAtStartOfDay).state)
+	postUpdate(Liv_Temp_Min, Liv_Temperature.minimumSince(now.toDateTimeAtStartOfDay).state)
+end
+
+// Creates an item that stores the last update time of this item
+rule "Records last Liv Temp update time"
+when
+  Item Liv_Temperature received update
+then
+  postUpdate(Liv_Temp_LastUpdate, new DateTimeType())
+end
+
+// This rule will be used to test Scale transformation service
+rule "Compute Liv humidex"
+when
+    Item Liv_Temperature changed
+then
+	var Number T = Liv_Temperature.state as DecimalType
+	var Number H = Liv_Humidity.state as DecimalType	
+	var Number x = 7.5 * T/(237.7 + T)
+	var Number e = 6.112 * Math::pow(10, x.doubleValue) * H/100
+	var Number humidex = T + (new Double(5) / new Double(9)) * (e - 10)
+	postUpdate(Liv_Humidex, humidex)
+end
+
+
+rule "LivRoom Delayed Temp set"
+when
+    Item Liv_Temp_DelayedOnOff changed from 0 to 1
+then
+	logInfo("Delay Temp", "Timer activated")
+	
+	liv_delayedTemp = Liv_Temp_DelayedTemp.state as DecimalType
+	
+	val org.eclipse.xtext.xbase.lib.Functions$Function2 makeTimer = [
+        int myDelay,
+        org.eclipse.xtext.xbase.lib.Functions$Function2 makeTimer2 |
+			logInfo("Delay Temp", "Inside makeTimer, myDelay=" + myDelay)
+            if(myDelay>0) {
+				Liv_Temp_DelayedCaption.sendCommand(String::format("%.1f °C in %.1f h", liv_delayedTemp.floatValue(), (myDelay / 60.0)))
+                Liv_Temp_DelayedTimer = createTimer(now.plusMinutes(1)) [| 
+                    makeTimer2.apply(myDelay-1, makeTimer2)
+                ]
+            } else {
+                //timer reach zero
+				logInfo("Delay Temp", "Delayed set: Setting temp to " + liv_delayedTemp)
+ 				Liv_Temp_Setpoint.sendCommand(liv_delayedTemp)
+ 				Liv_Temp_DelayedOnOff.sendCommand("0")
+            }
+    ]
+
+    //start the timer
+    var intervalMinutes = ((Liv_Temp_DelayedInterval.state as DecimalType) * 60).intValue
+    makeTimer.apply(intervalMinutes ,makeTimer)
+	
+end
+
+
+rule "LivRoom Delayed Temp set"
+when
+    Item Liv_Temp_DelayedOnOff changed from 1 to 0
+then
+	logInfo("Delay Temp", "Timer deactivated")
+	if (Liv_Temp_DelayedTimer != null) {
+		Liv_Temp_DelayedTimer.cancel()
+		Liv_Temp_DelayedTimer = null
+	}
+	Liv_Temp_DelayedCaption.sendCommand("Not Set")  
+end
+
+
+// ====================================================================
+//  BedRoom 
+// ====================================================================
+
+rule "Set Predefined Temp in bedroom"
+when
+	Item Bed_Temp_Predefined received command
+then
+	logDebug("TempLogger", "Bed_Temp_Predefined changed. Bed_Temp_Predefined.state: [{}]", Bed_Temp_Predefined.state) 
+	sendCommand(BedTemp_Setpoint, transform("MAP", "predefined_temp.map", Bed_Temp_Predefined.state.toString))
+end
+
+rule "UnSet Predefined Temp in bedroom"
+when
+	Item BedTemp_Setpoint changed
+then
+	logDebug("TempLogger", "BedTemp_Setpoint changed. BedTemp_Setpoint.state: [{}]. BedTemp_Setpoint.previousState: [{}]", BedTemp_Setpoint.state, previousState)
+	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", BedTemp_Setpoint.state.toString) 
+	if (setpointToPredefined != null && setpointToPredefined.length > 0)
+		postUpdate(Bed_Temp_Predefined, setpointToPredefined)
+	else
+		postUpdate(Bed_Temp_Predefined, NULL)
+		
+end
+
+rule "Update max and min temperatures in bedroom"
+when
+	Item Bed_Temperature changed or
+	Time cron "0 0 0 * * ?" or
+	System started
+then	
+	postUpdate(Bed_Temp_Max, Bed_Temperature.maximumSince(now.withTimeAtStartOfDay).state)
+	postUpdate(Bed_Temp_Min, Bed_Temperature.minimumSince(now.withTimeAtStartOfDay).state)
+end
+
+// Creates an item that stores the last update time of this item
+rule "Records last bedroom Temp update time"
+when
+  Item Bed_Temperature received update
+then
+  postUpdate(Bed_Temp_LastUpdate, new DateTimeType())
+end
+

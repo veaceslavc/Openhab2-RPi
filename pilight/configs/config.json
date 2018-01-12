@@ -1,0 +1,97 @@
+{
+	"devices": {
+		"outside_temp": {
+			"protocol": [ "tfa30" ],
+			"id": [{
+				"id": 37
+			}],
+			"humidity": 50,
+			"temperature": 8.7
+		},
+		"remote_button_1": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "A3",
+				"unit": 26
+			}],
+			"state": "on"
+		},
+		"remote_button_2": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "B3",
+				"unit": 26
+			}],
+			"state": "on"
+		},
+		"remote_button_3": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "C7",
+				"unit": 27
+			}],
+			"state": "on"
+		},
+		"remote_button_4": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "E3",
+				"unit": 27
+			}],
+			"state": "on"
+		},
+		"livRoom_light": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "D11",
+				"unit": 26
+			}],
+			"state": "on"
+		}
+	},
+	"rules": {},
+	"gui": {
+		"outside_temp": {
+			"name": "Outside Temp",
+			"group": [ "Outside" ],
+			"media": [ "web" ]
+		},
+		"remote_button_4": {
+			"name": "Humidifier",
+			"group": [ "Bedroom" ],
+			"media": [ "web" ]
+		},
+		"livRoom_light": {
+			"name": "Light",
+			"group": [ "Living" ],
+			"media": [ "web" ]
+		}
+	},
+	"settings": {
+		"log-level": 6,
+		"pid-file": "/var/run/pilight.pid",
+		"log-file": "/var/log/pilight.log",
+		"webserver-enable": 1,
+		"webserver-root": "/usr/local/share/pilight/webgui",
+		"webserver-http-port": 5001,
+		"webserver-cache": 1,
+		"gpio-platform": "raspberrypi2",
+		"port": 5000
+	},
+	"hardware": {
+		"433gpio": {
+			"sender": 0,
+			"receiver": 2
+		}
+	},
+	"registry": {
+		"webgui": {
+			"tabs": 0
+		},
+		"pilight": {
+			"version": {
+				"current": "8.0.2"
+			}
+		}
+	}
+}
