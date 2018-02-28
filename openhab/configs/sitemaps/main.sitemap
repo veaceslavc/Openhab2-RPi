@@ -70,4 +70,54 @@ sitemap main label="Home"
 		Switch item=BedLight_Lamp
 	}
 	
+	Group item=roomba_items {
+			Text item=roomba_phase
+            Switch item=roomba_command mappings=[start="Start",stop="Stop",dock="Dock"]
+            Switch item=roomba_command mappings=[pause="Pause",resume="Resume"]
+            Switch item=roomba_control
+            Text label="Map" icon="map" {
+                Frame label="Map" {
+                    //Image icon="map" url="http://your_OH_ip_address:port/static/map.png" label="Map" refresh=1000
+                    Webview icon="map" url="http://192.168.1.13:8080/static/roomba_map.html" height=21 label="Map"
+                }
+            }
+			Text label="Settings" icon="select" {
+				Frame label="Settings" {
+					Text item=roomba_cleanSchedule
+					Switch item=roomba_edgeClean
+					Switch item=roomba_carpetBoost
+					Switch item=roomba_vacHigh visibility=[roomba_carpetBoost==OFF]
+					Switch item=roomba_noAutoPasses
+					Switch item=roomba_twoPass visibility=[roomba_noAutoPasses==OFF]
+					Switch item=roomba_binPause
+				}
+			}
+			Frame label="Status" {
+				Text item=roomba_softwareVer
+				Text item=roomba_batPct
+				Text item=roomba_lastcommand
+				Switch item=roomba_full mappings=[ON="FULL", OFF="Not Full"]
+				Switch item=roomba_bin_present mappings=[OFF="Removed", ON="Installed"]
+				Text item=roomba_rssi
+				Text item=roomba_lastheardfrom
+			}
+            Frame label="Mission" {
+                Text item=roomba_status
+                Text item=roomba_rechrgM visibility=[roomba_status=="Recharging"]
+                Text item=roomba_mission
+                Text item=roomba_percent_complete
+                Switch item=roomba_error mappings=[ON="ERROR!", OFF="Normal"]
+                Text item=roomba_errortext
+                Text item=roomba_mssnM
+                Text item=roomba_sqft
+                Text item=roomba_nMssn
+                Text item=roomba_lastmissioncompleted
+                Text item=roomba_initiator
+            }
+            Frame label="Location" {
+                Text item=roomba_theta
+                Text item=roomba_x
+                Text item=roomba_y
+            }
+        }
 }
