@@ -11,6 +11,8 @@ then
     logInfo("Initializer", "Started Timer ...")
 
 	Liv_Temp_DelayedCaption.postUpdate("Not Set")
+	TH_GF_HCLivMode.sendCommand("Auto")
+	TH_GF_HCBedMode.sendCommand("Auto")
 
     createTimer(now.plusSeconds(30)) [|
 
@@ -21,6 +23,7 @@ then
         
     ]
 end
+
 
 // Outside 
 
@@ -53,16 +56,6 @@ then
 		postUpdate(Liv_Temp_Predefined, NULL)
 	}
 		
-end
-
-rule "Update max and min temperatures in Liv Room"
-when
-	Item Liv_Temperature changed or
-	Time cron "0 0 0 * * ?" or
-	System started
-then	
-	postUpdate(Liv_Temp_Max, Liv_Temperature.maximumSince(now.toDateTimeAtStartOfDay).state)
-	postUpdate(Liv_Temp_Min, Liv_Temperature.minimumSince(now.toDateTimeAtStartOfDay).state)
 end
 
 // Creates an item that stores the last update time of this item
@@ -148,23 +141,13 @@ rule "UnSet Predefined Temp in bedroom"
 when
 	Item BedTemp_Setpoint changed
 then
-	logDebug("TempLogger", "BedTemp_Setpoint changed. BedTemp_Setpoint.state: [{}]. BedTemp_Setpoint.previousState: [{}]", BedTemp_Setpoint.state, previousState)
+	// logDebug("TempLogger", "BedTemp_Setpoint changed. BedTemp_Setpoint.state: [{}]. BedTemp_Setpoint.previousState: [{}]", BedTemp_Setpoint.state, previousState)
 	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", BedTemp_Setpoint.state.toString) 
 	if (setpointToPredefined != null && setpointToPredefined.length > 0)
 		postUpdate(Bed_Temp_Predefined, setpointToPredefined)
 	else
 		postUpdate(Bed_Temp_Predefined, NULL)
 		
-end
-
-rule "Update max and min temperatures in bedroom"
-when
-	Item Bed_Temperature changed or
-	Time cron "0 0 0 * * ?" or
-	System started
-then	
-	postUpdate(Bed_Temp_Max, Bed_Temperature.maximumSince(now.withTimeAtStartOfDay).state)
-	postUpdate(Bed_Temp_Min, Bed_Temperature.minimumSince(now.withTimeAtStartOfDay).state)
 end
 
 // Creates an item that stores the last update time of this item

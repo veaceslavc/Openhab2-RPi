@@ -15,8 +15,6 @@ sitemap main label="Home"
 	Frame label="Living Room" {
 		Text item=Liv_Temperature valuecolor=[Liv_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Liv_Temp_LastUpdate>90="#D3D3D3",>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"] {
 			Frame {
-				Text item=Liv_Temp_Max valuecolor=[>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"]
-				Text item=Liv_Temp_Min valuecolor=[>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"]
 				Text item=Liv_Humidity
 				Text item=Liv_Humidex
 				Text item=Liv_Temp_LastUpdate valuecolor=[Liv_Temp_LastUpdate>120="#FFA500", Liv_Temp_LastUpdate>300="#FF0000"]
@@ -44,8 +42,6 @@ sitemap main label="Home"
 	Frame label="BedRoom" {
 		Text item=Bed_Temperature valuecolor=[Bed_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Bed_Temp_LastUpdate>90="#D3D3D3",>25="#FFA500",>18="#006400",>5="#0000A0",<=5="#0000FF"] {
 			Frame {
-				Text item=Bed_Temp_Max valuecolor=[>25="#FFA500",>18="#006400",>5="#0000A0",<=5="#0000FF"]
-				Text item=Bed_Temp_Min valuecolor=[>25="#FFA500",>18="#006400",>5="#0000A0",<=5="#0000FF"]
 				Text item=Bed_Humidity
 				Text item=Bed_Temp_LastUpdate valuecolor=[Bed_Temp_LastUpdate>120="#FFA500", Bed_Temp_LastUpdate>300="#FF0000"]
 			}			

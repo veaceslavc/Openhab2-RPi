@@ -1,0 +1,49 @@
+
+rule "Roomba update command"
+when
+    Item roomba_phase received update
+then
+    // logInfo("Roomba", "Roomba phase received update: " + roomba_phase.state)
+    switch(roomba_phase.state) {
+        case "run"          : postUpdate(roomba_command,"start")
+        case "hmUsrDock"    : postUpdate(roomba_command,"pause")
+        case "hmMidMsn"     : postUpdate(roomba_command,"pause")
+        case "hmPostMsn"    : {
+                                postUpdate(roomba_command,"dock")
+                                postUpdate(roomba_lastmissioncompleted, new DateTimeType())
+                              }
+        case "charge"       : postUpdate(roomba_command,"dock")
+        case "stop"         : postUpdate(roomba_command,"stop")
+        case "pause"        : postUpdate(roomba_command,"pause")
+        case "stuck"        : postUpdate(roomba_command,"stop")
+    }
+    logInfo("Roomba", "New Roomba_Command: " + roomba_command.state)
+end
+
+rule "Roomba Last Update Timestamp"
+when
+    Item roomba_rssi received update
+then
+    // logInfo("Roomba", "Roomba rssi received update: " + roomba_rssi.state)
+    postUpdate(roomba_lastheardfrom, new DateTimeType())
+end
+
+rule "Roomba percent completed"
+when
+    Item roomba_sqft received update
+then
+    var sqft_completed = roomba_sqft.state as Number
+
+    var max_sqft = 400  //insert max square footage here
+    var min_sqft = 0
+
+    var Number completed_percent = 0
+
+    if (sqft_completed < min_sqft) {completed_percent = 0}
+    else if (sqft_completed > max_sqft) {completed_percent = 100}
+    else {
+        completed_percent = (((sqft_completed - min_sqft) * 100) / (max_sqft-min_sqft)).intValue
+        }
+    logInfo("Roomba", "Roomba percent complete "+roomba_sqft.state+" of "+max_sqft.toString+" calculated as " + completed_percent.toString + "%")
+    postUpdate(roomba_percent_complete,completed_percent)
+end

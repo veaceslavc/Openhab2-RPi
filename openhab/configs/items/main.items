@@ -13,8 +13,6 @@ Group GF_Living_TH "Living Room Thermostat" [ "Thermostat" ]
 Number Liv_Temperature 		"Living Temp [%.1f °C]"		<temperature> 	(LivRoom, Temperatures, LivTemp_Chart, GF_Living_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/livroom/temp:state:default]"}
 Number Liv_Humidity 		"Humidity [%.1f %%]"		<water> 		(LivRoom) {mqtt="<[broker:/ha/livroom/hum:state:default]"}
 Number Liv_Humidex		    "Humidex [SCALE(humidex.scale):%s]" 			(LivRoom)
-Number Liv_Temp_Max 		"Todays Maximum [%.1f °C]"			<temperature> (LivRoom)
-Number Liv_Temp_Min 		"Todays Minimum [%.1f °C]"			<temperature> (LivRoom)
 Number Liv_Temp_Chart_Period		"Chart Period"
 Number Liv_Temp_Predefined							<temperature_cold>
 DateTime Liv_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
@@ -35,8 +33,6 @@ Group BedTemp_Chart
 Group GF_Bedroom_TH "BedRoom Thermostat" [ "Thermostat" ]													
 Number Bed_Temperature 		"Bedroom Temp [%.1f °C]"		<temperature> 	(BedRoom, Temperatures, BedTemp_Chart, GF_Bedroom_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/bedroom/temp:state:default]"}
 Number Bed_Humidity 		"Humidity [%.1f %%]"		<water> 		(BedRoom) {mqtt="<[broker:/ha/bedroom/hum:state:default]"}
-Number Bed_Temp_Max 		"Todays Maximum [%.1f °C]"			<temperature> (BedRoom)
-Number Bed_Temp_Min 		"Todays Minimum [%.1f °C]"			<temperature> (BedRoom)
 Number Bed_Temp_Chart_Period		"Chart Period"
 Number Bed_Temp_Predefined										<temperature_cold>
 DateTime Bed_Temp_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
@@ -71,7 +67,7 @@ String roomba_mission  "Mission [%s]" <msg> (roomba_items) {mqtt="<[broker:/room
 Number roomba_nMssn    "Cleaning Mission Number [%d]" <number> (roomba_items)  {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_nMssn:state:default]"}
 String roomba_phase    "Phase [%s]" <msg> (roomba_items) {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_phase:state:default]"}
 String roomba_initiator  "Initiator [%s]" <msg> (roomba_items) {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_initiator:state:default]"}
-Switch roomba_error "Error [%]" <roombaerror> (roomba_items) {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_error:state:MAP(switchFromMqtt.map)]"}
+Switch roomba_error "Error [%s]" <roombaerror> (roomba_items) {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_error:state:MAP(switchFromMqtt.map)]"}
 String roomba_errortext  "Error Message [%s]" <msg> (roomba_items) {mqtt="<[broker:/roomba/feedback/error_message:state:default]"}
 Number roomba_mssnM "Cleaning Elapsed Time [%d m]" <clock> (roomba_items)  {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_mssnM:state:default]"}
 Number roomba_sqft "Square Ft Cleaned [%d]" <groundfloor> (roomba_items)  {mqtt="<[broker:/roomba/feedback/cleanMissionStatus_sqft:state:default]"}
