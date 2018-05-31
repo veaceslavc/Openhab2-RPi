@@ -13,6 +13,7 @@ then
 	Liv_Temp_DelayedCaption.postUpdate("Not Set")
 	TH_GF_HCLivMode.sendCommand("Auto")
 	TH_GF_HCBedMode.sendCommand("Auto")
+	Heating_Controls_Active.sendCommand("ON")
 
     createTimer(now.plusSeconds(30)) [|
 

@@ -6,6 +6,7 @@ Group OutsideTemp_Chart
 Number Outside_Temp 		        "Outside Temp [%.1f °C]"		<temperature> 	(Outside, Temperatures, OutsideTemp_Chart) {pilight="local#outside_temp,property=temperature"}
 Number Outside_Temp_Chart_Period    "Chart Period"
 DateTime Outside_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
+Switch Heating_Controls_Active     "Heating Controls"
 
 Group LivRoom
 Group LivTemp_Chart													
