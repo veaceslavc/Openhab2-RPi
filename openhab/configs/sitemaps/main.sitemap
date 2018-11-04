@@ -1,7 +1,7 @@
 sitemap main label="Home"
 {
 	Frame label="Outside" {
-		Text item=Outside_Temp valuecolor=[Outside_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Outside_Temp_LastUpdate>90="#D3D3D3",>25="#FFA500",>15="#006400",>5="#0000A0",<=5="#0000FF"] {
+		Text item=Outside_Temp valuecolor=[Outside_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Outside_Temp_LastUpdate>180="#D3D3D3",>25="#FFA500",>15="#006400",>5="#0000A0",<=5="#0000FF"] {
 			Frame {
 				Text item=Outside_Temp valuecolor=[Outside_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Outside_Temp_LastUpdate>90="#D3D3D3",>25="#FFA500",>15="#006400",>5="#0000A0",<=5="#0000FF"]
 				Switch item=Heating_Controls_Active
@@ -14,17 +14,18 @@ sitemap main label="Home"
 	}
 	
 	Frame label="Living Room" {
-		Text item=Liv_Temperature valuecolor=[Liv_Temp_LastUpdate=="Uninitialized"="#D3D3D3",Liv_Temp_LastUpdate>90="#D3D3D3",>28="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"] {
+		Text item=Liv_Temperature valuecolor=[Liv_Thermostat_Status!="ONLINE"="#D3D3D3",>25="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"] {
 			Frame {
-				Text item=Liv_Humidity
-				Text item=Liv_Humidex
-				Text item=Liv_Temp_LastUpdate valuecolor=[Liv_Temp_LastUpdate>120="#FFA500", Liv_Temp_LastUpdate>300="#FF0000"]
-		Text item=Liv_Temp_DelayedCaption {
-			Setpoint item=Liv_Temp_DelayedTemp minValue=5 maxValue=30 step=0.5
-			Setpoint item=Liv_Temp_DelayedInterval minValue=0.5 maxValue=8 step=0.5
-			Switch item=Liv_Temp_DelayedOnOff	mappings=[0 = "Cancel",1 = "Set"]
-		}
-			}			
+				// Text item=Liv_Humidity
+				// Text item=Liv_Humidex
+				Text item=Liv_Thermostat_Status  valuecolor=[Liv_Thermostat_Status=="ONLINE"="green", Liv_Thermostat_Status!="ONLINE"="red"]
+			
+				Text item=Liv_Temp_DelayedCaption {
+					Setpoint item=Liv_Temp_DelayedTemp minValue=5 maxValue=30 step=0.5
+					Setpoint item=Liv_Temp_DelayedInterval minValue=0.5 maxValue=8 step=0.5
+					Switch item=Liv_Temp_DelayedOnOff	mappings=[0 = "Cancel",1 = "Set"]
+				}
+			}
 			Frame {
 				Switch item=Liv_Temp_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
 				Chart item=LivTemp_Chart period=h refresh=6000 visibility=[Liv_Temp_Chart_Period==0, Liv_Temp_Chart_Period=="Uninitialized"]
@@ -56,7 +57,7 @@ sitemap main label="Home"
 		Setpoint item=BedTemp_Setpoint label="Set Temp" minValue=5 maxValue=27 step=0.5 visibility=[Heating_Controls_Active=="ON"]
 		Switch item=Bed_Temp_Predefined label="Set Temp" mappings=[0="Cold", 1="Normal", 2="Warm"] visibility=[Heating_Controls_Active=="ON"]
 		Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 2="Lower", 6="Low", 100="Max"] 
-		Text label="Lights" {
+		Text label="Lights" icon="rgb" {
 			Frame label="Bedroom Lights" {
 				Slider item=Bedroom_Dimmer label="Dimmer"
 				Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 2="Lower", 6="Low", 100="Max"] 
@@ -67,26 +68,34 @@ sitemap main label="Home"
 		Switch item=BedLight_Lamp
 	}
 	
-	Group item=roomba_items {
-			Text item=roomba_phase
-            Switch item=roomba_command mappings=[start="Start",stop="Stop",dock="Dock"]
-            Switch item=roomba_command mappings=[pause="Pause",resume="Resume"]
-            Switch item=roomba_control
-            Text label="Map" icon="map" {
-                Frame label="Map" {
-                    //Image icon="map" url="http://your_OH_ip_address:port/static/map.png" label="Map" refresh=1000
-                    Webview icon="map" url="http://192.168.1.13:8080/static/roomba_map.html" height=21 label="Map"
-                }
-            }
-			Text label="Settings" icon="select" {
-				Frame label="Settings" {
-					Text item=roomba_cleanSchedule
-					Switch item=roomba_edgeClean
-					Switch item=roomba_carpetBoost
-					Switch item=roomba_vacHigh visibility=[roomba_carpetBoost==OFF]
-					Switch item=roomba_noAutoPasses
-					Switch item=roomba_twoPass visibility=[roomba_noAutoPasses==OFF]
-					Switch item=roomba_binPause
+	Frame label="Other" {
+		Text label="Tree Lights" {
+			Selection item=TreeLights_Scene  mappings=[0="0", 1="1", 2="2", 3="3", 4="4", 5="5", 6="6", 7="7", 8="8"]
+			Slider item=TreeLights_Speed
+		}
+
+		Text item=roomba_items {
+			Frame label="Control" {
+				Text item=roomba_phase
+				Switch item=roomba_command mappings=[start="Start",stop="Stop",dock="Dock"]
+				Switch item=roomba_command mappings=[pause="Pause",resume="Resume"]
+				Switch item=roomba_control
+				Text label="Map" icon="map" {
+					Frame label="Map" {
+						//Image icon="map" url="http://your_OH_ip_address:port/static/map.png" label="Map" refresh=1000
+						Webview icon="map" url="http://192.168.1.13:8080/static/roomba_map.html" height=21 label="Map"
+					}
+				}
+				Text label="Settings" icon="select" {
+					Frame label="Settings" {
+						Text item=roomba_cleanSchedule
+						Switch item=roomba_edgeClean
+						Switch item=roomba_carpetBoost
+						Switch item=roomba_vacHigh visibility=[roomba_carpetBoost==OFF]
+						Switch item=roomba_noAutoPasses
+						Switch item=roomba_twoPass visibility=[roomba_noAutoPasses==OFF]
+						Switch item=roomba_binPause
+					}
 				}
 			}
 			Frame label="Status" {
@@ -98,23 +107,24 @@ sitemap main label="Home"
 				Text item=roomba_rssi
 				Text item=roomba_lastheardfrom
 			}
-            Frame label="Mission" {
-                Text item=roomba_status
-                Text item=roomba_rechrgM visibility=[roomba_status=="Recharging"]
-                Text item=roomba_mission
-                Text item=roomba_percent_complete
-                Switch item=roomba_error mappings=[ON="ERROR!", OFF="Normal"]
-                Text item=roomba_errortext
-                Text item=roomba_mssnM
-                Text item=roomba_sqft
-                Text item=roomba_nMssn
-                Text item=roomba_lastmissioncompleted
-                Text item=roomba_initiator
-            }
-            Frame label="Location" {
-                Text item=roomba_theta
-                Text item=roomba_x
-                Text item=roomba_y
-            }
-        }
+			Frame label="Mission" {
+				Text item=roomba_status
+				Text item=roomba_rechrgM visibility=[roomba_status=="Recharging"]
+				Text item=roomba_mission
+				Text item=roomba_percent_complete
+				Switch item=roomba_error mappings=[ON="ERROR!", OFF="Normal"]
+				Text item=roomba_errortext
+				Text item=roomba_mssnM
+				Text item=roomba_sqft
+				Text item=roomba_nMssn
+				Text item=roomba_lastmissioncompleted
+				Text item=roomba_initiator
+			}
+			Frame label="Location" {
+				Text item=roomba_theta
+				Text item=roomba_x
+				Text item=roomba_y
+			}
+		}
+	}
 }

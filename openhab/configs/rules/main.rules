@@ -11,6 +11,8 @@ then
     logInfo("Initializer", "Started Timer ...")
 
 	Liv_Temp_DelayedCaption.postUpdate("Not Set")
+	TH_GF_HCLivMode.sendCommand("Auto")
+	TH_GF_HCBedMode.sendCommand("Auto")
 	Heating_Controls_Active.sendCommand("ON")
 
     createTimer(now.plusSeconds(30)) [|
@@ -20,8 +22,6 @@ then
         if (Liv_Temp_DelayedTemp.state == NULL) Liv_Temp_DelayedTemp.postUpdate(20)
         if (Liv_Temp_DelayedInterval.state == NULL) Liv_Temp_DelayedInterval.postUpdate(4)
         
-		TH_GF_HCLivMode.sendCommand("Auto")
-		TH_GF_HCBedMode.sendCommand("Auto")
     ]
 end
 
@@ -51,7 +51,7 @@ when
 	Item Liv_Temp_Setpoint changed
 then
 	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", Liv_Temp_Setpoint.state.toString) 
-	if (setpointToPredefined !== null && setpointToPredefined.length > 0) {
+	if (setpointToPredefined != null && setpointToPredefined.length > 0) {
 		postUpdate(Liv_Temp_Predefined, setpointToPredefined)
 	} else {
 		postUpdate(Liv_Temp_Predefined, NULL)
@@ -59,15 +59,75 @@ then
 		
 end
 
-// Creates an item that stores the last update time of this item
-rule "Records last Liv Temp update time"
+// Creates an item that stores the status of Livving Room Thermostat
+
+rule "Liv Thermostat Status"
 when
-  Item Liv_Temperature received update
+	System started or
+    Thing 'zwave:device:66993751:node2' changed
 then
-  postUpdate(Liv_Temp_LastUpdate, new DateTimeType())
+	var thingStatusInfo = getThingStatusInfo("zwave:device:66993751:node2")
+
+	// if ((thingStatusInfo != null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
+	if (thingStatusInfo != null) {
+		Liv_Thermostat_Status.sendCommand(thingStatusInfo.getStatus().toString())
+		logInfo("ThingStatus", "Liv_Thermostat is online.")
+	} else {
+		Liv_Thermostat_Status.sendCommand("UNKNOWN")
+	}
 end
 
+rule	"WallMote Control"
+when
+	Item Wallmote_SceneNumber received update
+then
+	logInfo("Wallmote_SceneNumber", "Wallmote_SceneNumber got scene # " + Wallmote_SceneNumber.state )
+	switch Wallmote_SceneNumber.state {
+		case 1.0: {
+			Bedroom_Dimmer.sendCommand(100)
+    	}
+		case 2.0: {
+			Bedroom_Lamp.sendCommand(100)
+    	}
+		case 3.0: {
+			Bedroom_Dimmer.sendCommand(OFF)
+    	}
+		case 4.0: {
+			Bedroom_Lamp.sendCommand(OFF)
+    	}
+		case 1.2: {
+			Bedroom_Dimmer.sendCommand((Bedroom_Dimmer.state as Number) + 5)
+    	}
+		case 2.2: {
+			Bedroom_Lamp.sendCommand((Bedroom_Lamp.state as Number) + 5)
+    	}
+		case 3.1: {
+			if ( (Bedroom_Dimmer.state as Number) > 5 ) {
+				Bedroom_Dimmer.sendCommand((Bedroom_Dimmer.state as Number) - 5)
+			} else {
+				Bedroom_Dimmer.sendCommand(1);
+			}
+    	}
+		case 4.2: {
+			if ( (Bedroom_Lamp.state as Number) > 5 ) {
+				Bedroom_Lamp.sendCommand((Bedroom_Lamp.state as Number) - 5)
+			} else {
+				Bedroom_Lamp.sendCommand(1);
+			}
+    	}
+	}	
+end
+
+rule "Say welcome "
+when
+    Item RF433_Socket2 changed to ON
+then
+    //Alexa_Living_Room_TTS.sendCommand('Olga, Slava is coming for lunch.')
+end
+
+
 // This rule will be used to test Scale transformation service
+/*
 rule "Compute Liv humidex"
 when
     Item Liv_Temperature changed
@@ -79,7 +139,7 @@ then
 	var Number humidex = T + (new Double(5) / new Double(9)) * (e - 10)
 	postUpdate(Liv_Humidex, humidex)
 end
-
+*/
 
 rule "LivRoom Delayed Temp set"
 when
@@ -118,7 +178,7 @@ when
     Item Liv_Temp_DelayedOnOff changed from 1 to 0
 then
 	logInfo("Delay Temp", "Timer deactivated")
-	if (Liv_Temp_DelayedTimer !== null) {
+	if (Liv_Temp_DelayedTimer != null) {
 		Liv_Temp_DelayedTimer.cancel()
 		Liv_Temp_DelayedTimer = null
 	}
@@ -144,7 +204,7 @@ when
 then
 	// logDebug("TempLogger", "BedTemp_Setpoint changed. BedTemp_Setpoint.state: [{}]. BedTemp_Setpoint.previousState: [{}]", BedTemp_Setpoint.state, previousState)
 	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", BedTemp_Setpoint.state.toString) 
-	if (setpointToPredefined !== null && setpointToPredefined.length > 0)
+	if (setpointToPredefined != null && setpointToPredefined.length > 0)
 		postUpdate(Bed_Temp_Predefined, setpointToPredefined)
 	else
 		postUpdate(Bed_Temp_Predefined, NULL)

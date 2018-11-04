@@ -3,47 +3,61 @@ Group Temperatures
 Group Lights
 
 Group OutsideTemp_Chart	
-Number Outside_Temp 		        "Outside Temp [%.1f °C]"		<temperature> 	(Outside, Temperatures, OutsideTemp_Chart) [ "CurrentTemperature" ] {pilight="local#outside_temp,property=temperature"}
-Number Outside_Temp_Chart_Period    "Chart Period"
+Number Outside_Temp 		        "Outside Temp [%.1f °C]"		<temperature> 	(Outside, Temperatures, OutsideTemp_Chart) {pilight="local#outside_temp,property=temperature"}
+Number Outside_Temp_Chart_Period    "Chart Period"      <line>
 DateTime Outside_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
 Switch Heating_Controls_Active     "Heating Controls"
 
 Group LivRoom
 Group LivTemp_Chart													
 Group GF_Living_TH "Living Room Thermostat" [ "Thermostat" ]
-Number Liv_Temperature 		"Living Temp [%.1f °C]"		<temperature> 	(LivRoom, Temperatures, LivTemp_Chart, GF_Living_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/livroom/temp:state:default]"}
+//Number Liv_Temperature 		"Living Temp [%.1f °C]"		<temperature> 	(LivRoom, Temperatures, LivTemp_Chart, GF_Living_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/livroom/temp:state:default]"}
+Number Liv_Temperature 		"Living Temp [%.1f °C]"		<temperature> 	(LivRoom, Temperatures, LivTemp_Chart, GF_Living_TH) [ "CurrentTemperature" ] {channel="zwave:device:66993751:node2:sensor_temperature"}
 Number Liv_Humidity 		"Humidity [%.1f %%]"		<water> 		(LivRoom) {mqtt="<[broker:/ha/livroom/hum:state:default]"}
 Number Liv_Humidex		    "Humidex [SCALE(humidex.scale):%s]" 			(LivRoom)
-Number Liv_Temp_Chart_Period		"Chart Period"
-Number Liv_Temp_Predefined							<temperature_cold>
-DateTime Liv_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
+Number Liv_Temp_Chart_Period		"Chart Period"      <line>
+Number Liv_Temp_Predefined							<heating_cp>
+String Liv_Thermostat_Status "Device Status [%s]"   <network>
+//DateTime Liv_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
+Number Liv_Temp_Setpoint		"Set Temp [%.1f °C]" <heating_c> (LivRoom, LivTemp_Chart, GF_Living_TH)  [ "TargetTemperature" ] {channel="zwave:device:66993751:node2:thermostat_setpoint_heating"}
+String TH_GF_HCLivMode "Living Room Heating/Cooling Mode" (GF_Living_TH) [ "homekit:HeatingCoolingMode" ]
 
 String Liv_Temp_DelayedCaption	"Delayed Temp [%s]"				<clock-on>
 Number Liv_Temp_DelayedTemp		"Delayed Temp [%.1f °C]"		<temperature_cold>
 Number Liv_Temp_DelayedInterval	"Delay By [%.1f hours]"				<clock>
 Number Liv_Temp_DelayedOnOff	"Timer"						<clock-on>
 
-Switch LivLight_Lamp 	"Living Room Lamp" 		(LivRoom, Lights)	["Lighting"]	{pilight="local#livRoom_light"}
-Number Liv_Temp_Setpoint		"Set Temp [%.1f °C]" <temperature_cold> (LivRoom, LivTemp_Chart, GF_Living_TH)  [ "TargetTemperature" ] {mqtt=">[broker:/ha/livroom/targetTemp:command:*:default], <[broker:/ha/livroom/targetTempIn:state:default]"}
-String TH_GF_HCLivMode "Living Room Heating/Cooling Mode" (GF_Living_TH) [ "homekit:HeatingCoolingMode" ]
-Switch RF433_Socket2 	"Living Room Humidifier"		(BedRoom)	["Switchable"] {pilight="local#remote_button_2"}
+Switch LivLight_Lamp 	"Living room Lamp" 		(LivRoom, Lights)	["Switchable"]	{pilight="local#livRoom_light"}
+Switch RF433_Socket2 	"Living humidifier"		<fan_box>   (BedRoom)	["Switchable"] {pilight="local#remote_button_2"}
 
 
 Group BedRoom
 Group BedTemp_Chart
-Group GF_Bedroom_TH "Bedroom Thermostat" [ "Thermostat" ]													
+Group GF_Bedroom_TH "BedRoom Thermostat" [ "Thermostat" ]													
 Number Bed_Temperature 		"Bedroom Temp [%.1f °C]"		<temperature> 	(BedRoom, Temperatures, BedTemp_Chart, GF_Bedroom_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/bedroom/temp:state:default]"}
 Number Bed_Humidity 		"Humidity [%.1f %%]"		<water> 		(BedRoom) {mqtt="<[broker:/ha/bedroom/hum:state:default]"}
-Number Bed_Temp_Chart_Period		"Chart Period"
-Number Bed_Temp_Predefined										<temperature_cold>
+Number Bed_Temp_Chart_Period		"Chart Period"      <line>
+Number Bed_Temp_Predefined										<heating_cp>
 DateTime Bed_Temp_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
 
-Switch BedLight_Lamp 	"Bedroom Humidifier" 		(BedRoom)	["Switchable"] {pilight="local#remote_button_4"}
-Number BedTemp_Setpoint		"Set BTemp [%.1f °C]" <temperature_cold> (BedRoom, BedTemp_Chart, GF_Bedroom_TH) [ "TargetTemperature" ] {mqtt=">[broker:/ha/bedroom/targetTemp:command:*:default], <[broker:/ha/bedroom/targetTempIn:state:default]"}
-String TH_GF_HCBedMode "Bedroom Heating/Cooling Mode" (GF_Bedroom_TH) [ "homekit:HeatingCoolingMode" ]
+Switch BedLight_Lamp 	"Humidifier" 		    <fan_box> (BedRoom)	["Switchable"] {pilight="local#remote_button_4"}
+Number BedTemp_Setpoint		"Set BTemp [%.1f °C]" <heating_c> (BedRoom, BedTemp_Chart, GF_Bedroom_TH) [ "TargetTemperature" ] {mqtt=">[broker:/ha/bedroom/targetTemp:command:*:default], <[broker:/ha/bedroom/targetTempIn:state:default]"}
+String TH_GF_HCBedMode "BedRoom Heating/Cooling Mode" (GF_Bedroom_TH) [ "homekit:HeatingCoolingMode" ]
 Dimmer Bedroom_Dimmer   "Bedroom Dimmer [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb100:bedroom:brightness" }
 Dimmer Bedroom_Lamp   "Bedroom Lamp [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb120:bedroom:brightness" }
 Dimmer Bedroom_Lamp_Color   "Bedroom Lamp Color [%d %%]"           <slider>  { channel="tplinksmarthome:lb120:bedroom:colorTemperature" }
+
+/* Wallmote */
+Number Wallmote_SceneNumber     "Wallmote Scene" 	 {channel="zwave:device:66993751:node3:scene_number"}
+Number Wallmote_BatteryLevel     "Wallmote Battery Level" 	 {channel="zwave:device:66993751:node3:battery-level"}
+
+/* Christmass Tree */
+Number TreeLights_Scene 		"Scene"		<colorlight> 		(Tree) {mqtt=">[broker:/ha/tree/scene:command:*:default]"}
+Dimmer TreeLights_Speed       "Speed"     <time>              (Tree) {mqtt=">[broker:/ha/tree/speed:command:*:default]"}
+
+/* Alexa */
+String Alexa_Living_Room_TTS                   "Text to Speech"                        (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:textToSpeech"}
+
 
 /* Roomba items */
 Group roomba_items  "Roomba"        <roomba>        (gGF)
