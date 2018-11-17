@@ -18,6 +18,7 @@ sitemap main label="Home"
 			Frame {
 				// Text item=Liv_Humidity
 				// Text item=Liv_Humidex
+				Text item=Liv_Temperature valuecolor=[Liv_Thermostat_Status!="ONLINE"="#D3D3D3",>25="#FFA500",>20="#006400",>5="#0000A0",<=5="#0000FF"]
 				Text item=Liv_Thermostat_Status  valuecolor=[Liv_Thermostat_Status=="ONLINE"="green", Liv_Thermostat_Status!="ONLINE"="red"]
 			
 				Text item=Liv_Temp_DelayedCaption {
@@ -60,7 +61,7 @@ sitemap main label="Home"
 		Text label="Lights" icon="rgb" {
 			Frame label="Bedroom Lights" {
 				Slider item=Bedroom_Dimmer label="Dimmer"
-				Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 2="Lower", 6="Low", 100="Max"] 
+				Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 1="Lower", 6="Low", 100="Max"] 
 				Slider item=Bedroom_Lamp label="Lamp"
 				Slider item=Bedroom_Lamp_Color label="Lamp color"
 			}
@@ -70,7 +71,7 @@ sitemap main label="Home"
 	
 	Frame label="Other" {
 		Text label="Tree Lights" {
-			Selection item=TreeLights_Scene  mappings=[0="0", 1="1", 2="2", 3="3", 4="4", 5="5", 6="6", 7="7", 8="8"]
+			Selection item=TreeLights_Scene  mappings=[0="0", 1="1", 2="2", 3="3", 4="4", 5="5", 6="6", 7="7", 8="8", 9="9", 10="10"]
 			Slider item=TreeLights_Speed
 		}
 
@@ -124,6 +125,56 @@ sitemap main label="Home"
 				Text item=roomba_theta
 				Text item=roomba_x
 				Text item=roomba_y
+			}
+		}
+		Text label="Alexa" {
+
+			Frame label="Alexa" {
+				Default   item=Echo_Living_Room_Player
+				Slider    item=Echo_Living_Room_Volume
+				Switch    item=Echo_Living_Room_Shuffle
+				Image     item=Echo_Living_Room_ImageUrl      label=""
+				Text      item=Echo_Living_Room_Title
+				Text      item=Echo_Living_Room_Subtitle1
+				Text      item=Echo_Living_Room_Subtitle2
+				Text      item=Echo_Living_Room_ProviderDisplayName
+
+				// The listed providers are only samples, you could have more
+				Selection item=Echo_Living_Room_MusicProviderId mappings=[ 'TUNEIN'='Radio', 'SPOTIFY'='Spotify', 'AMAZON_MUSIC'='Amazon Music', 'CLOUDPLAYER'='Amazon']
+				Text    item=Echo_Living_Room_MusicProviderId
+
+				// To start one of your flashbriefings use Flashbriefing.<YOUR FLASHBRIEFING THING ID>
+				Selection item=Echo_Living_Room_StartCommand mappings=[ 'Weather'='Weather', 'Traffic'='Traffic', 'GoodMorning'='Good Morning', 'SingASong'='Song', 'TellStory'='Story', 'FlashBriefing'='Flash Briefing', 'FlashBriefing.flashbriefing1'='Technical', 'FlashBriefing.flashbriefing2'='Life Style' ]
+
+				Selection item=Echo_Living_Room_RadioStationId mappings=[ ''='Off', 's1139'='Antenne Steiermark', 's8007'='Hitradio Ö3', 's16793'='Radio 10', 's8235'='FM4' ]
+				Text    item=Echo_Living_Room_RadioStationId
+				Switch  item=Echo_Living_Room_Radio
+
+				Text    item=Echo_Living_Room_AmazonMusicTrackId
+				Text    item=Echo_Living_Room_AmazonMusicPlayListId
+				Switch  item=Echo_Living_Room_AmazonMusic
+
+				Text    item=Echo_Living_Room_BluetoothMAC
+				// Change the <YOUR_DEVICE_MAC> Place holder with the MAC address shown, if alexa is connected to the device
+				Selection item=Echo_Living_Room_BluetoothMAC mappings=[ ''='Disconnected', '<YOUR_DEVICE_MAC>'='Bluetooth Device 1', '<YOUR_DEVICE_MAC>'='Bluetooth Device 2']
+
+				// These are only view of the possible options. Enable ShowIDsInGUI in the binding configuration and look in drop-down-box of this channel in the Paper UI Control section
+				Selection item=Echo_Living_Room_PlayAlarmSound mappings=[ ''='None', 'ECHO:system_alerts_soothing_01'='Adrift', 'ECHO:system_alerts_atonal_02'='Clangy']
+
+				Switch  item=Echo_Living_Room_Bluetooth
+				Text    item=Echo_Living_Room_BluetoothDeviceName
+			}
+
+			Frame label="Flash Briefing Technical" {
+				Switch  item=FlashBriefing_Technical_Save
+				Switch  item=FlashBriefing_Technical_Active
+				Text    item=FlashBriefing_Technical_Play
+			}
+
+			Frame label="Flash Briefing Life Style" {
+				Switch  item=FlashBriefing_LifeStyle_Save
+				Switch  item=FlashBriefing_LifeStyle_Active
+				Text    item=FlashBriefing_LifeStyle_Play
 			}
 		}
 	}

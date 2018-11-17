@@ -1,0 +1,47 @@
+Group Alexa_Living_Room <player>
+
+// Player control
+Player Echo_Living_Room_Player                "Player"                                (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:player"}
+Dimmer Echo_Living_Room_Volume                "Volume [%.0f %%]" <soundvolume>        (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:volume"}
+Switch Echo_Living_Room_Shuffle               "Shuffle"                               (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:shuffle"}
+
+// Player Information
+String Echo_Living_Room_ImageUrl              "Image URL"                             (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:imageUrl"}
+String Echo_Living_Room_Title                 "Title"                                 (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:title"}
+String Echo_Living_Room_Subtitle1             "Subtitle 1"                            (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:subtitle1"}
+String Echo_Living_Room_Subtitle2             "Subtitle 2"                            (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:subtitle2"}
+String Echo_Living_Room_ProviderDisplayName   "Provider"                              (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:providerDisplayName"}
+
+// Music provider and start command
+String Echo_Living_Room_MusicProviderId       "Music Provider Id"                     (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:musicProviderId"}
+String Echo_Living_Room_PlayMusicCommand      "Play music voice command (Write Only)" (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:playMusicVoiceCommand"}
+String Echo_Living_Room_StartCommand          "Start Information" (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:startCommand"}
+
+// TuneIn Radio
+String Echo_Living_Room_RadioStationId        "TuneIn Radio Station Id"               (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:radioStationId"}
+Switch Echo_Living_Room_Radio                 "TuneIn Radio"                          (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:radio"}
+
+// Amazon Music
+String Echo_Living_Room_AmazonMusicTrackId    "Amazon Music Track Id"                 (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:amazonMusicTrackId"}
+String Echo_Living_Room_AmazonMusicPlayListId "Amazon Music Playlist Id"              (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:amazonMusicPlayListId"}
+Switch Echo_Living_Room_AmazonMusic           "Amazon Music"                          (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:amazonMusic"}
+
+// Bluetooth
+String Echo_Living_Room_BluetoothMAC          "Bluetooth MAC Address" <bluetooth>     (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:bluetoothMAC"}
+Switch Echo_Living_Room_Bluetooth             "Bluetooth"             <bluetooth>     (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:bluetooth"}
+String Echo_Living_Room_BluetoothDeviceName   "Bluetooth Device"      <bluetooth>     (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:bluetoothDeviceName"}
+
+// Commands
+String Echo_Living_Room_TTS                   "Text to Speech"                        (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:textToSpeech"}
+String Echo_Living_Room_Remind                "Remind"                                (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:remind"}
+String Echo_Living_Room_PlayAlarmSound        "Play Alarm Sound"                      (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:playAlarmSound"}
+String Echo_Living_Room_StartRoutine          "Start Routine"                         (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:startRoutine"}
+
+// Flashbriefings
+Switch FlashBriefing_Technical_Save   "Save (Write only)" { channel="amazonechocontrol:flashbriefingprofile:d403a00c:flashbriefing1:save"} 
+Switch FlashBriefing_Technical_Active "Active" { channel="amazonechocontrol:flashbriefingprofile:d403a00c:flashbriefing1:active"}
+String FlashBriefing_Technical_Play   "Play (Write only)" { channel="amazonechocontrol:flashbriefingprofile:d403a00c:flashbriefing1:playOnDevice"}
+
+Switch FlashBriefing_LifeStyle_Save   "Save (Write only)" { channel="amazonechocontrol:flashbriefingprofile:d403a00c:flashbriefing2:save"} 
+Switch FlashBriefing_LifeStyle_Active "Active" { channel="amazonechocontrol:flashbriefingprofile:d403a00c:flashbriefing2:active"}
+String FlashBriefing_LifeStyle_Play   "Play (Write only)" { channel="amazonechocontrol:flashbriefingprofile:d403a00c:flashbriefing2:playOnDevice"}

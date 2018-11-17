@@ -52,11 +52,9 @@ Number Wallmote_SceneNumber     "Wallmote Scene" 	 {channel="zwave:device:669937
 Number Wallmote_BatteryLevel     "Wallmote Battery Level" 	 {channel="zwave:device:66993751:node3:battery-level"}
 
 /* Christmass Tree */
-Number TreeLights_Scene 		"Scene"		<colorlight> 		(Tree) {mqtt=">[broker:/ha/tree/scene:command:*:default]"}
-Dimmer TreeLights_Speed       "Speed"     <time>              (Tree) {mqtt=">[broker:/ha/tree/speed:command:*:default]"}
+Number TreeLights_Scene 		"Scene"		<colorlight> 		(Tree) {mqtt=">[broker:/ha/tree/to/scene:command:*:default], <[broker:/ha/tree/from/scene:state:default]"}
+Dimmer TreeLights_Speed         "Speed"     <time>              (Tree) {mqtt=">[broker:/ha/tree/to/speed:command:*:default],<>[broker:/ha/tree/from/speed:state:default]"}
 
-/* Alexa */
-String Alexa_Living_Room_TTS                   "Text to Speech"                        (Alexa_Living_Room) {channel="amazonechocontrol:echo:d403a00c:G090LB09739503XD:textToSpeech"}
 
 
 /* Roomba items */

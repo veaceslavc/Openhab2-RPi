@@ -3,6 +3,7 @@
 
 var Timer Liv_Temp_DelayedTimer
 var DecimalType liv_delayedTemp
+//const WALLMOTE_INCDEC=5
 
 rule "Initialize items"
 when
@@ -96,12 +97,20 @@ then
 			Bedroom_Lamp.sendCommand(OFF)
     	}
 		case 1.2: {
-			Bedroom_Dimmer.sendCommand((Bedroom_Dimmer.state as Number) + 5)
+			if ( (Bedroom_Dimmer.state as Number) < 95 ) {
+				Bedroom_Dimmer.sendCommand((Bedroom_Dimmer.state as Number) + 5)
+			} else {
+				Bedroom_Dimmer.sendCommand(100);
+			}
     	}
 		case 2.2: {
-			Bedroom_Lamp.sendCommand((Bedroom_Lamp.state as Number) + 5)
+			if ( (Bedroom_Lamp.state as Number) < 95 ) {
+				Bedroom_Lamp.sendCommand((Bedroom_Lamp.state as Number) + 5)
+			} else {
+				Bedroom_Lamp.sendCommand(1);
+			}
     	}
-		case 3.1: {
+		case 3.2: {
 			if ( (Bedroom_Dimmer.state as Number) > 5 ) {
 				Bedroom_Dimmer.sendCommand((Bedroom_Dimmer.state as Number) - 5)
 			} else {
