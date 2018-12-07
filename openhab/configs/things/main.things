@@ -1,4 +1,1 @@
 // Main things file
-
-tplinksmarthome:lb100:bedroom "Bedroom Dimmer" [ ipAddress="192.168.1.50", refresh=10, transitionPeriod=500 ]
-tplinksmarthome:lb120:bedroom "Bedroom Lamp" [ ipAddress="192.168.1.51", refresh=10, transitionPeriod=500 ]

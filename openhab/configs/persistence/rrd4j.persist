@@ -9,4 +9,5 @@ Items {
 	
 	// let's only store temperature values in rrd
 	BedTemp_Chart*, LivTemp_Chart*, OutsideTemp_Chart* : strategy = everyMinute, restoreOnStartup
+	Bed_Humidity : strategy = everyMinute, restoreOnStartup
 }

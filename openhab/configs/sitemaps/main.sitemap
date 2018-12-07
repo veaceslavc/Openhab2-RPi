@@ -35,10 +35,9 @@ sitemap main label="Home"
 			}
 		}
 		Setpoint item=Liv_Temp_Setpoint minValue=5 maxValue=30 step=0.5 visibility=[Heating_Controls_Active=="ON"]
-		Switch item=Liv_Temp_Predefined label="Set Temp" mappings=[0="Cold", 1="Normal", 2="Warm"] visibility=[Heating_Controls_Active=="ON"]
+		Switch item=Liv_Temp_Predefined label="Set Temp" mappings=[0="Off", 1="Cold", 2="Norm", 3="Warm"] visibility=[Heating_Controls_Active=="ON"]
 		Switch item=LivLight_Lamp label="Lamp"
 		Switch item=RF433_Socket2 label="Humidifier"
-
 	}
 	
 
@@ -54,9 +53,15 @@ sitemap main label="Home"
 				Chart item=BedTemp_Chart period=D refresh=30000 visibility=[Bed_Temp_Chart_Period==1]
 				Chart item=BedTemp_Chart period=W refresh=30000 visibility=[Bed_Temp_Chart_Period==2]
 			}
+			Frame {
+				Text label="Humidity" icon="humidity"
+				Chart item=Bed_Humidity period=h refresh=6000 visibility=[Bed_Temp_Chart_Period==0, Bed_Temp_Chart_Period=="Uninitialized"]
+				Chart item=Bed_Humidity period=D refresh=30000 visibility=[Bed_Temp_Chart_Period==1]
+				Chart item=Bed_Humidity period=W refresh=30000 visibility=[Bed_Temp_Chart_Period==2]
+			}
 		}
 		Setpoint item=BedTemp_Setpoint label="Set Temp" minValue=5 maxValue=27 step=0.5 visibility=[Heating_Controls_Active=="ON"]
-		Switch item=Bed_Temp_Predefined label="Set Temp" mappings=[0="Cold", 1="Normal", 2="Warm"] visibility=[Heating_Controls_Active=="ON"]
+		Switch item=Bed_Temp_Predefined label="Set Temp" mappings=[0="Off", 1="Cold", 2="Norm", 3="Warm"] visibility=[Heating_Controls_Active=="ON"]
 		Switch item=Bedroom_Dimmer label="Dimmer" mappings=[0="Off", 2="Lower", 6="Low", 100="Max"] 
 		Text label="Lights" icon="rgb" {
 			Frame label="Bedroom Lights" {
@@ -71,8 +76,15 @@ sitemap main label="Home"
 	
 	Frame label="Other" {
 		Text label="Tree Lights" {
-			Selection item=TreeLights_Scene  mappings=[0="0", 1="1", 2="2", 3="3", 4="4", 5="5", 6="6", 7="7", 8="8", 9="9", 10="10"]
-			Slider item=TreeLights_Speed
+			Frame label="Tree" {
+				Selection item=TreeLights_Scene  mappings=[0="0", 1="1", 2="2", 3="3", 4="4", 5="5", 6="6", 7="7", 8="8", 9="9", 10="10"]
+				Slider item=TreeLights_Speed
+			}
+			Frame label="WiFi Switch" {
+				Switch item=WiFiSw_Switch icon="poweroutlet"
+				Text item=WiFiSw_Power
+				Text item=WiFiSw_Usage
+			}
 		}
 
 		Text item=roomba_items {
@@ -176,6 +188,10 @@ sitemap main label="Home"
 				Switch  item=FlashBriefing_LifeStyle_Active
 				Text    item=FlashBriefing_LifeStyle_Play
 			}
+		}
+
+		Text label="Other" {
+			Switch item=StatusLED
 		}
 	}
 }

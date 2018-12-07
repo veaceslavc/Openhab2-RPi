@@ -3,7 +3,8 @@ Group Temperatures
 Group Lights
 
 Group OutsideTemp_Chart	
-Number Outside_Temp 		        "Outside Temp [%.1f °C]"		<temperature> 	(Outside, Temperatures, OutsideTemp_Chart) {pilight="local#outside_temp,property=temperature"}
+Number Outside_Temp_Raw 		    "Outside Temp Raw [%.1f °C]"		{pilight="local#outside_temp,property=temperature"}
+Number Outside_Temp 		        "Outside Temp [%.1f °C]"        <temperature> 	(Outside, Temperatures, OutsideTemp_Chart)
 Number Outside_Temp_Chart_Period    "Chart Period"      <line>
 DateTime Outside_Temp_LastUpdate	"Last Update [%1$ta %1$tR]"	<clock>
 Switch Heating_Controls_Active     "Heating Controls"
@@ -35,7 +36,7 @@ Group BedRoom
 Group BedTemp_Chart
 Group GF_Bedroom_TH "BedRoom Thermostat" [ "Thermostat" ]													
 Number Bed_Temperature 		"Bedroom Temp [%.1f °C]"		<temperature> 	(BedRoom, Temperatures, BedTemp_Chart, GF_Bedroom_TH) [ "CurrentTemperature" ] {mqtt="<[broker:/ha/bedroom/temp:state:default]"}
-Number Bed_Humidity 		"Humidity [%.1f %%]"		<water> 		(BedRoom) {mqtt="<[broker:/ha/bedroom/hum:state:default]"}
+Number Bed_Humidity 		"Humidity [%.1f %%]"		<humidity> 		(BedRoom) {mqtt="<[broker:/ha/bedroom/hum:state:default]"}
 Number Bed_Temp_Chart_Period		"Chart Period"      <line>
 Number Bed_Temp_Predefined										<heating_cp>
 DateTime Bed_Temp_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
@@ -43,9 +44,9 @@ DateTime Bed_Temp_LastUpdate		"Last Update [%1$ta %1$tR]"	<clock>
 Switch BedLight_Lamp 	"Humidifier" 		    <fan_box> (BedRoom)	["Switchable"] {pilight="local#remote_button_4"}
 Number BedTemp_Setpoint		"Set BTemp [%.1f °C]" <heating_c> (BedRoom, BedTemp_Chart, GF_Bedroom_TH) [ "TargetTemperature" ] {mqtt=">[broker:/ha/bedroom/targetTemp:command:*:default], <[broker:/ha/bedroom/targetTempIn:state:default]"}
 String TH_GF_HCBedMode "BedRoom Heating/Cooling Mode" (GF_Bedroom_TH) [ "homekit:HeatingCoolingMode" ]
-Dimmer Bedroom_Dimmer   "Bedroom Dimmer [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb100:bedroom:brightness" }
-Dimmer Bedroom_Lamp   "Bedroom Lamp [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb120:bedroom:brightness" }
-Dimmer Bedroom_Lamp_Color   "Bedroom Lamp Color [%d %%]"           <slider>  { channel="tplinksmarthome:lb120:bedroom:colorTemperature" }
+Dimmer Bedroom_Dimmer   "Bedroom Dimmer [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb100:A6F53C:brightness" }
+Dimmer Bedroom_Lamp   "Bedroom Lamp [%d %%]"           <slider>  [ "Lighting" ] { channel="tplinksmarthome:lb120:7F125B:brightness" }
+Dimmer Bedroom_Lamp_Color   "Bedroom Lamp Color [%d %%]"           <slider>  { channel="tplinksmarthome:lb120:7F125B:colorTemperature" }
 
 /* Wallmote */
 Number Wallmote_SceneNumber     "Wallmote Scene" 	 {channel="zwave:device:66993751:node3:scene_number"}
@@ -55,7 +56,13 @@ Number Wallmote_BatteryLevel     "Wallmote Battery Level" 	 {channel="zwave:devi
 Number TreeLights_Scene 		"Scene"		<colorlight> 		(Tree) {mqtt=">[broker:/ha/tree/to/scene:command:*:default], <[broker:/ha/tree/from/scene:state:default]"}
 Dimmer TreeLights_Speed         "Speed"     <time>              (Tree) {mqtt=">[broker:/ha/tree/to/speed:command:*:default],<>[broker:/ha/tree/from/speed:state:default]"}
 
+/* WiFi Switch */
+Switch WiFiSw_Switch          "Outlet"                               { channel="tplinksmarthome:hs110:511FE1:switch"}
+Number WiFiSw_Power           "Power"                                { channel="tplinksmarthome:hs110:511FE1:power"}
+Number WiFiSw_Usage           "Usage"                                { channel="tplinksmarthome:hs110:511FE1:energyUsage"}
 
+/* GPIO */
+Switch StatusLED           "Status LED"       {gpio="pin:4"}
 
 /* Roomba items */
 Group roomba_items  "Roomba"        <roomba>        (gGF)

@@ -3,6 +3,9 @@
 
 var Timer Liv_Temp_DelayedTimer
 var DecimalType liv_delayedTemp
+var Number outside_raw_prev
+var boolean ledState
+
 //const WALLMOTE_INCDEC=5
 
 rule "Initialize items"
@@ -15,6 +18,7 @@ then
 	TH_GF_HCLivMode.sendCommand("Auto")
 	TH_GF_HCBedMode.sendCommand("Auto")
 	Heating_Controls_Active.sendCommand("ON")
+	ledState = true
 
     createTimer(now.plusSeconds(30)) [|
 
@@ -26,8 +30,41 @@ then
     ]
 end
 
+// LED heartbeat 
+rule "LED Heartbeat"
+when
+	Time cron "0/5 * * ? * *"
+then
+	if (ledState) {
+		StatusLED.sendCommand(ON)
+	} else {
+		StatusLED.sendCommand(OFF)
+	}
+	//var State newState = ledState ? OnOffType.ON : OnOffType.OFF
+	ledState = !ledState
+end
+
 
 // Outside 
+
+rule "Smooth Outside Temp"
+when
+  Item Outside_Temp_Raw received update
+then
+	var outside_raw = Outside_Temp_Raw.state as Number
+	// logInfo("ThingStatus", "Outside_Temp_Raw.state = " + outside_raw)
+	if ( Outside_Temp.state == null || outside_raw_prev == null || outside_raw == null) {
+		// change Outside_Temp if not initialized or diff is less than 1 degree
+		// logInfo("ThingStatus", "Updated Outside_Temp.")
+	  	Outside_Temp.postUpdate(outside_raw)
+	} else if ( Math::abs( outside_raw.floatValue - outside_raw_prev.floatValue) <= 1 ){
+		// logInfo("ThingStatus", "Updated Outside_Temp.")
+	  	Outside_Temp.postUpdate(outside_raw)
+	} else {
+		// logInfo("ThingStatus", "Skipped Outside_Temp.")
+	}
+	outside_raw_prev = outside_raw
+end
 
 rule "Records last Outside Temp update time"
 when
@@ -51,8 +88,8 @@ rule "UnSet Predefined Temp in Living room"
 when
 	Item Liv_Temp_Setpoint changed
 then
-	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", Liv_Temp_Setpoint.state.toString) 
-	if (setpointToPredefined != null && setpointToPredefined.length > 0) {
+	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", Liv_Temp_Setpoint.state.format("%2.1f")) 
+	if (setpointToPredefined !== null && setpointToPredefined.length > 0) {
 		postUpdate(Liv_Temp_Predefined, setpointToPredefined)
 	} else {
 		postUpdate(Liv_Temp_Predefined, NULL)
@@ -70,7 +107,7 @@ then
 	var thingStatusInfo = getThingStatusInfo("zwave:device:66993751:node2")
 
 	// if ((thingStatusInfo != null) && (thingStatusInfo.getStatus().toString() == "ONLINE")) {
-	if (thingStatusInfo != null) {
+	if (thingStatusInfo !== null) {
 		Liv_Thermostat_Status.sendCommand(thingStatusInfo.getStatus().toString())
 		logInfo("ThingStatus", "Liv_Thermostat is online.")
 	} else {
@@ -187,7 +224,7 @@ when
     Item Liv_Temp_DelayedOnOff changed from 1 to 0
 then
 	logInfo("Delay Temp", "Timer deactivated")
-	if (Liv_Temp_DelayedTimer != null) {
+	if (Liv_Temp_DelayedTimer !== null) {
 		Liv_Temp_DelayedTimer.cancel()
 		Liv_Temp_DelayedTimer = null
 	}
@@ -213,7 +250,7 @@ when
 then
 	// logDebug("TempLogger", "BedTemp_Setpoint changed. BedTemp_Setpoint.state: [{}]. BedTemp_Setpoint.previousState: [{}]", BedTemp_Setpoint.state, previousState)
 	var setpointToPredefined = transform("MAP", "predefined_temp_reverse.map", BedTemp_Setpoint.state.toString) 
-	if (setpointToPredefined != null && setpointToPredefined.length > 0)
+	if (setpointToPredefined !== null && setpointToPredefined.length > 0)
 		postUpdate(Bed_Temp_Predefined, setpointToPredefined)
 	else
 		postUpdate(Bed_Temp_Predefined, NULL)
