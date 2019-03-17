@@ -22,9 +22,12 @@ sitemap main label="Home"
 				Text item=Liv_Thermostat_Status  valuecolor=[Liv_Thermostat_Status=="ONLINE"="green", Liv_Thermostat_Status!="ONLINE"="red"]
 			
 				Text item=Liv_Temp_DelayedCaption {
-					Setpoint item=Liv_Temp_DelayedTemp minValue=5 maxValue=30 step=0.5
-					Setpoint item=Liv_Temp_DelayedInterval minValue=0.5 maxValue=8 step=0.5
-					Switch item=Liv_Temp_DelayedOnOff	mappings=[0 = "Cancel",1 = "Set"]
+					Setpoint item=Liv_Temp_DelayedTemp minValue=15 maxValue=25 step=1
+						Setpoint item=Liv_Temp_DelayedInterval minValue=0.5 maxValue=8 step=0.5
+						Switch item=Liv_Temp_DelayedOnOff	mappings=[0 = "Cancel",1 = "Set"]
+					Setpoint item=Liv_DelayTemp_TimeHour minValue=0 maxValue=23 step=1
+					Setpoint item=Liv_DelayTemp_TimeMinutes minValue=0 maxValue=55 step=5
+					Switch 	item=Liv_DelayTemp_Enabled
 				}
 			}
 			Frame {
@@ -36,7 +39,7 @@ sitemap main label="Home"
 		}
 		Setpoint item=Liv_Temp_Setpoint minValue=5 maxValue=30 step=0.5 visibility=[Heating_Controls_Active=="ON"]
 		Switch item=Liv_Temp_Predefined label="Set Temp" mappings=[0="Off", 1="Cold", 2="Norm", 3="Warm"] visibility=[Heating_Controls_Active=="ON"]
-		Switch item=LivLight_Lamp label="Lamp"
+		Switch item=WiFiSw_Switch label="Lamp"
 		Switch item=RF433_Socket2 label="Humidifier"
 	}
 	
@@ -192,6 +195,7 @@ sitemap main label="Home"
 
 		Text label="Other" {
 			Switch item=StatusLED
+			Switch item=InternetConnection
 		}
 	}
 }

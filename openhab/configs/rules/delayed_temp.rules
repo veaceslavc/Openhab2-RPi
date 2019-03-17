@@ -1,0 +1,93 @@
+/************** Delayed Temp ***********/
+
+
+var Timer delayedTempTimer = null
+
+var java.util.concurrent.locks.ReentrantLock lock1 = new java.util.concurrent.locks.ReentrantLock()
+
+rule "Living Room Delayed Temp Timer"
+when
+    Item Liv_DelayTemp_TimeHour changed or
+    Item Liv_DelayTemp_TimeMinutes changed
+then
+	if(Liv_DelayTemp_Enabled.state != NULL && Liv_DelayTemp_TimeHour.state != NULL && Liv_DelayTemp_TimeMinutes.state != NULL )
+	{
+	  // If the UI to change the delay time is clicked several times the code below
+	  // is subject to race conditions. Therefore we make sure that all events 
+	  // are processed one after the other.
+	  lock1.lock()
+	  try {
+		var String msg = ""
+		
+		// Copy the Alarm-Time from the UI to local variables
+		var DecimalType hour = Liv_DelayTemp_TimeHour.state as DecimalType
+		var DecimalType minute = Liv_DelayTemp_TimeMinutes.state as DecimalType
+
+		// Combine the hour and minutes to one string to be displayed in the 
+		// user interface
+		if (hour.intValue < 10) { msg = "0" } 
+		msg = msg + Liv_DelayTemp_TimeHour.state.format("%d") + ":"
+
+		if (minute.intValue < 10) { msg = msg + "0" }
+		msg = msg + Liv_DelayTemp_TimeMinutes.state.format("%d")
+        var Number delayedTemp = Liv_Temp_DelayedTemp.state as Number
+		postUpdate(Liv_Temp_DelayedCaption, String::format("%d °C at %s", delayedTemp.intValue, msg))
+		logInfo("DelayedTemp","New Delayed Temp time: "+msg)
+
+		// calculate the alarm time [min]
+		var int alarm1
+		alarm1 = (Liv_DelayTemp_TimeHour.state as DecimalType).intValue * 60 + 
+					(Liv_DelayTemp_TimeMinutes.state as DecimalType).intValue
+		alarm1 = alarm1.intValue
+
+		// calculate current time [min]
+		var int hour1
+		hour1 = now.getMinuteOfDay
+		hour1 = hour1.intValue
+
+		// calculate the difference between the requested Delayed Temp time and 
+		// current time (again in minutes)  
+		var int delta1
+		delta1 = (alarm1 - hour1)
+		delta1 = delta1.intValue
+
+		// add one day (1440 minutes) if alarm time for today already passed
+		if (hour1 > alarm1) { delta1 = delta1 + 1440 }
+		
+
+		// check if there is already an alarm timer0; cancel it if present
+		if (delayedTempTimer !== null) {
+		   delayedTempTimer.cancel
+		   delayedTempTimer = null
+		}
+
+		// create a new timer using the calculated delta [min]
+		delayedTempTimer = createTimer(now.plusMinutes(delta1)) [|
+			// This code will be executed if the timer triggers
+			
+			if(Liv_DelayTemp_Enabled.state == ON)
+			{
+				logInfo("DelayedTemp", "Delayed set: Setting temp to " + Liv_Temp_DelayedTemp.state as DecimalType)
+ 				sendCommand(Liv_Temp_Setpoint, Liv_Temp_DelayedTemp.state as Number)
+                postUpdate(Liv_Temp_DelayedCaption, "Disabled")
+ 				Liv_DelayTemp_Enabled.sendCommand(OFF)
+			}//if enabled			
+		]
+		logInfo("DelayedTemp","DelayedTemp, timer set.")
+		
+	} finally  {
+	     // release the lock - we are ready to process the next event
+		lock1.unlock()
+	}
+	 
+  }//IF
+end
+
+rule "Initialization"
+when 
+	System started
+then
+	 postUpdate(Liv_DelayTemp_Enabled, OFF)
+	 postUpdate(Liv_DelayTemp_TimeHour,  8)
+	 postUpdate(Liv_DelayTemp_TimeMinutes, 0)
+end

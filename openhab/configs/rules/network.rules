@@ -1,0 +1,32 @@
+
+var boolean ledState = false
+var Timer networkTimer = null 
+var int blinkIntervalNormal = 5000
+var int internetLostBlinkIntervalFactor = 10
+
+rule "Initialize network items"
+when
+    System started
+then
+    logInfo("Initializer", "Initialize network rules...")
+
+    networkTimer = createTimer(now.plusMillis(blinkIntervalNormal/internetLostBlinkIntervalFactor), [|
+        if (ledState) {
+            StatusLED.sendCommand(ON)
+            ledState = false
+        } else {
+            StatusLED.sendCommand(OFF)
+            ledState = true
+        }
+
+        var int blinkInterval 
+        if (InternetConnection.state == ON) {
+            blinkInterval = blinkIntervalNormal
+        } else {
+            blinkInterval = blinkIntervalNormal/internetLostBlinkIntervalFactor
+        }
+     //logInfo("Initializer", "networkTimertimer.hasTerminated= " + networkTimer.hasTerminated)
+        networkTimer.reschedule(now.plusMillis(blinkInterval))
+    ])
+end
+

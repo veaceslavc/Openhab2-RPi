@@ -4,7 +4,6 @@
 var Timer Liv_Temp_DelayedTimer
 var DecimalType liv_delayedTemp
 var Number outside_raw_prev
-var boolean ledState
 
 //const WALLMOTE_INCDEC=5
 
@@ -18,7 +17,6 @@ then
 	TH_GF_HCLivMode.sendCommand("Auto")
 	TH_GF_HCBedMode.sendCommand("Auto")
 	Heating_Controls_Active.sendCommand("ON")
-	ledState = true
 
     createTimer(now.plusSeconds(30)) [|
 
@@ -29,21 +27,6 @@ then
         
     ]
 end
-
-// LED heartbeat 
-rule "LED Heartbeat"
-when
-	Time cron "0/5 * * ? * *"
-then
-	if (ledState) {
-		StatusLED.sendCommand(ON)
-	} else {
-		StatusLED.sendCommand(OFF)
-	}
-	//var State newState = ledState ? OnOffType.ON : OnOffType.OFF
-	ledState = !ledState
-end
-
 
 // Outside 
 
@@ -119,7 +102,7 @@ rule	"WallMote Control"
 when
 	Item Wallmote_SceneNumber received update
 then
-	logInfo("Wallmote_SceneNumber", "Wallmote_SceneNumber got scene # " + Wallmote_SceneNumber.state )
+	//logInfo("Wallmote_SceneNumber", "Wallmote_SceneNumber got scene # " + Wallmote_SceneNumber.state )
 	switch Wallmote_SceneNumber.state {
 		case 1.0: {
 			Bedroom_Dimmer.sendCommand(100)
@@ -263,5 +246,12 @@ when
   Item Bed_Temperature received update
 then
   postUpdate(Bed_Temp_LastUpdate, new DateTimeType())
+end
+
+rule "RF Remote for WiFi plug"
+when
+  Item LivLight_Lamp received update
+then
+	WiFiSw_Switch.sendCommand(LivLight_Lamp.state.toString())
 end
 
